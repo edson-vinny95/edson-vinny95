@@ -1,16 +1,32 @@
-## Hi there 👋
+# 👋 Olá, eu sou Edson Vinícius  
 
-<!--
-**edson-vinny95/edson-vinny95** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+🎓 Estudante de Técnico em Administração  
+💻 Apaixonado por programação e tecnologia  
+🚀 Buscando minha primeira oportunidade como Estagiário em Desenvolvimento de Software  
+📍 Goiânia - GO | 💻 Disponível para trabalho remoto  
 
-Here are some ideas to get you started:
+---
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+## 🔧 Tecnologias que estudo
+- HTML, CSS, JavaScript  
+- Lógica de Programação  
+- Git & GitHub  
+- Microsoft Excel, Word e Powerpoint  
+
+---
+
+## 📌 Projetos em destaque
+- [🌐 Portfolio Pessoal](#) — Meu site com informações sobre mim e meus projetos  
+- [🗂️ Sistema de Cadastro/Login](#) — Projeto simples para prática de JavaScript e lógica de programação  
+- [📊 Automação em Excel](#) — Projeto para manipulação de dados  
+
+---
+
+## 🌟 Sobre mim
+Gosto de aprender novas tecnologias, trabalhar em equipe e transformar ideias em projetos reais.  
+Meu objetivo é crescer como **desenvolvedor Full Stack** e colaborar em soluções inovadoras.
+
+---
+
+📫 **Entre em contato:**  
+[LinkedIn](https://linkedin.com/in/seunome) | [E-mail](mailto:seuemail@email.com)
