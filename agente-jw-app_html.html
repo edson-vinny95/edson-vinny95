@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><base href="https://d16ilfvy4mv02r.cloudfront.net/workspaces/BUuRgwvN5sG8O27GG6b0c5tR8Xr5UNXE/91f07d23-e36c-4e66-9192-e3525d3a3f78/files/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📖 Agente JW — Assistente Bíblico Inteligente</title>
+<style>
+  :root{
+    --azul-900:#0b2545;
+    --azul-800:#123a6b;
+    --azul-700:#1a4d8f;
+    --azul-600:#2563b3;
+    --dourado:#c9a34c;
+    --dourado-light:#e8d9ad;
+    --bg:#f4f6fa;
+    --card:#ffffff;
+    --text:#1c2431;
+    --muted:#6b7686;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);}
+  .app{display:grid;grid-template-columns:280px 1fr;height:100vh;}
+  /* Sidebar */
+  .sidebar{background:linear-gradient(180deg,var(--azul-900),var(--azul-800));color:#fff;display:flex;flex-direction:column;padding:18px 14px;overflow-y:auto;}
+  .logo{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+  .logo .icon{font-size:28px;}
+  .logo h1{font-size:17px;margin:0;line-height:1.2;}
+  .logo span{display:block;font-size:11px;color:var(--dourado-light);font-weight:400;}
+  .section-title{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--dourado-light);margin:16px 0 8px;}
+  .mode-btn{display:flex;align-items:center;gap:10px;width:100%;background:rgba(255,255,255,0.06);border:1px solid transparent;color:#fff;padding:9px 10px;border-radius:10px;margin-bottom:6px;cursor:pointer;font-size:13px;text-align:left;transition:.15s;}
+  .mode-btn:hover{background:rgba(255,255,255,0.14);}
+  .mode-btn.active{background:var(--dourado);color:#1c2431;font-weight:600;border-color:var(--dourado);}
+  .list-item{padding:8px 10px;border-radius:8px;font-size:12.5px;margin-bottom:4px;cursor:pointer;color:#e7ecf5;display:flex;justify-content:space-between;gap:6px;align-items:flex-start;}
+  .list-item:hover{background:rgba(255,255,255,0.08);}
+  .list-item .txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
+  .list-item button{background:none;border:none;color:#c9d3e3;cursor:pointer;font-size:12px;}
+  .list-item button:hover{color:#ff8080;}
+  .empty-hint{font-size:12px;color:#9fb0c9;padding:4px 6px 10px;}
+  .sidebar-footer{margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,0.12);}
+  .btn-ghost{width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);color:#fff;padding:8px;border-radius:8px;cursor:pointer;font-size:12.5px;margin-bottom:6px;}
+  .btn-ghost:hover{background:rgba(255,255,255,0.18);}
+
+  /* Main */
+  .main{display:flex;flex-direction:column;height:100vh;}
+  .topbar{background:var(--card);border-bottom:1px solid #e4e8f0;padding:12px 22px;display:flex;justify-content:space-between;align-items:center;}
+  .topbar .mode-label{font-weight:600;color:var(--azul-800);}
+  .topbar .mode-label small{display:block;color:var(--muted);font-weight:400;font-size:12px;}
+  .chat-area{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px;}
+  .msg{max-width:760px;padding:14px 16px;border-radius:var(--radius);line-height:1.55;font-size:14.5px;white-space:pre-wrap;}
+  .msg.user{align-self:flex-end;background:var(--azul-700);color:#fff;border-bottom-right-radius:4px;}
+  .msg.bot{align-self:flex-start;background:var(--card);border:1px solid #e4e8f0;border-bottom-left-radius:4px;position:relative;}
+  .msg.bot .fav-btn{position:absolute;top:8px;right:10px;background:none;border:none;cursor:pointer;font-size:16px;color:#cbd3e0;}
+  .msg.bot .fav-btn.active,.msg.bot .fav-btn:hover{color:var(--dourado);}
+  .msg .meta{font-size:11px;color:var(--muted);margin-top:8px;}
+  .welcome{margin:auto;text-align:center;color:var(--muted);max-width:520px;}
+  .welcome h2{color:var(--azul-800);margin-bottom:6px;}
+  .welcome .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px;}
+  .chip{background:#eef2fa;border:1px solid #dde5f3;border-radius:20px;padding:6px 14px;font-size:12.5px;color:var(--azul-800);cursor:pointer;}
+  .chip:hover{background:var(--dourado-light);}
+  .composer{border-top:1px solid #e4e8f0;background:var(--card);padding:14px 22px;display:flex;gap:10px;align-items:flex-end;}
+  .composer textarea{flex:1;resize:none;border:1px solid #d7deea;border-radius:12px;padding:12px 14px;font-size:14px;font-family:inherit;max-height:140px;min-height:46px;outline:none;}
+  .composer textarea:focus{border-color:var(--azul-600);}
+  .composer button.send{background:var(--azul-700);color:#fff;border:none;border-radius:12px;padding:0 20px;height:46px;cursor:pointer;font-weight:600;}
+  .composer button.send:hover{background:var(--azul-600);}
+  .composer button.send:disabled{opacity:.5;cursor:not-allowed;}
+  .typing{align-self:flex-start;color:var(--muted);font-size:13px;font-style:italic;padding-left:4px;}
+
+  /* Modal */
+  .modal-overlay{position:fixed;inset:0;background:rgba(10,20,40,0.55);display:none;align-items:center;justify-content:center;z-index:50;}
+  .modal-overlay.show{display:flex;}
+  .modal{background:#fff;border-radius:16px;padding:26px;max-width:440px;width:92%;}
+  .modal h3{margin-top:0;color:var(--azul-800);}
+  .modal p{font-size:13px;color:var(--muted);line-height:1.5;}
+  .modal input[type=password],.modal input[type=text]{width:100%;padding:10px 12px;border:1px solid #d7deea;border-radius:8px;font-size:14px;margin:10px 0;}
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:14px;}
+  .modal-actions button{padding:9px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13.5px;}
+  .modal-actions .cancel{background:#eef1f6;color:var(--text);}
+  .modal-actions .save{background:var(--azul-700);color:#fff;font-weight:600;}
+  .badge-ok{display:inline-block;font-size:11px;background:#e3f6ea;color:#1f8a4c;padding:2px 8px;border-radius:10px;margin-left:6px;}
+  .badge-off{display:inline-block;font-size:11px;background:#fdeeee;color:#c94141;padding:2px 8px;border-radius:10px;margin-left:6px;}
+
+  @media (max-width:760px){
+    .app{grid-template-columns:1fr;}
+    .sidebar{position:fixed;left:-280px;top:0;bottom:0;width:280px;z-index:40;transition:.2s;}
+    .sidebar.open{left:0;}
+    .msg{max-width:90%;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <div class="icon">📖</div>
+      <div>
+        <h1>Agente JW</h1>
+        <span>Assistente Bíblico Inteligente</span>
+      </div>
+    </div>
+
+    <div class="section-title">Modos do Assistente</div>
+    <button class="mode-btn active" data-mode="estudo">📖 Estudo Bíblico</button>
+    <button class="mode-btn" data-mode="pregacao">🗣️ Pregação</button>
+    <button class="mode-btn" data-mode="profecias">🔭 Profecias</button>
+    <button class="mode-btn" data-mode="objecoes">🛡️ Perguntas e Objeções</button>
+    <button class="mode-btn" data-mode="reflexao">🙏 Reflexão</button>
+
+    <div class="section-title">Histórico</div>
+    <div id="historyList"></div>
+
+    <div class="section-title">Favoritos ⭐</div>
+    <div id="favList"></div>
+
+    <div class="sidebar-footer">
+      <button class="btn-ghost" id="newChatBtn">➕ Nova conversa</button>
+      <button class="btn-ghost" id="settingsBtn">⚙️ Configurar chave de IA <span id="keyBadge"></span></button>
+      <button class="btn-ghost" id="clearBtn">🗑️ Limpar tudo</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="mode-label" id="modeLabel">📖 Modo: Estudo Bíblico<small>Explicação de textos, contexto histórico e revisão</small></div>
+      <button class="btn-ghost" style="width:auto;color:#1a4d8f;border-color:#c8d3e8" id="mobileToggle">☰ Menu</button>
+    </div>
+
+    <div class="chat-area" id="chatArea">
+      <div class="welcome" id="welcome">
+        <h2>Bem-vindo ao Agente JW</h2>
+        <p>Faça uma pergunta bíblica. As respostas usam exclusivamente o conteúdo e estilo das fontes oficiais <b>JW.org</b> e <b>wol.jw.org</b>, com referências e citações.</p>
+        <div class="chips">
+          <div class="chip" data-q="Explique o Reino de Deus.">Explique o Reino de Deus.</div>
+          <div class="chip" data-q="O que a Bíblia diz sobre a ressurreição?">Ressurreição na Bíblia</div>
+          <div class="chip" data-q="Como entender as 70 semanas de Daniel?">70 semanas de Daniel</div>
+          <div class="chip" data-q="Como responder à pergunta: por que Deus permite o sofrimento?">Por que Deus permite o sofrimento?</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="composer">
+      <textarea id="input" placeholder="Digite sua pergunta bíblica..." rows="1"></textarea>
+      <button class="send" id="sendBtn">Enviar</button>
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h3>⚙️ Configurar chave de IA (OpenRouter)</h3>
+    <p>Sua chave é usada <b>somente no seu navegador</b> para chamar a API da OpenRouter diretamente e fica salva apenas no seu dispositivo (localStorage). Ela nunca é enviada a nenhum outro servidor.</p>
+    <input type="password" id="apiKeyInput" placeholder="sk-or-..." autocomplete="off">
+    <p style="font-size:11.5px">Não tem uma chave? Crie em <b>openrouter.ai/keys</b> e garanta que sua conta tem créditos ativos.</p>
+    <div class="modal-actions">
+      <button class="cancel" id="cancelSettings">Cancelar</button>
+      <button class="save" id="saveSettings">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const MODES = {
+  estudo:{icon:'📖',label:'Estudo Bíblico',desc:'Explicação de textos, contexto histórico e revisão',
+    instrucao:'Modo Estudo Bíblico. Estruture a resposta com: explicação do texto, contexto histórico, versículos relacionados, publicações relacionadas (ex: Sentinela, Despertai!, wol.jw.org) e 2-3 perguntas de revisão ao final.'},
+  pregacao:{icon:'🗣️',label:'Pregação',desc:'Roteiro para conversas no ministério',
+    instrucao:'Modo Pregação. Estruture a resposta como um roteiro de conversa: Introdução, Pergunta inicial, Texto bíblico, Raciocínio, Conclusão.'},
+  profecias:{icon:'🔭',label:'Profecias',desc:'Daniel, Apocalipse, Mateus 24 e linha do tempo bíblica',
+    instrucao:'Modo Profecias. Foque em Daniel, Apocalipse, Mateus 24, profecias messiânicas e linha do tempo bíblica, sempre citando os versículos e publicações oficiais relacionadas ao tema.'},
+  objecoes:{icon:'🛡️',label:'Perguntas e Objeções',desc:'Respostas respeitosas baseadas nas Escrituras',
+    instrucao:'Modo Perguntas e Objeções. Estruture como: Análise da pergunta, Identificação dos conceitos envolvidos, Resposta baseada nas Escrituras, Referências. Mantenha tom respeitoso e não confrontador.'},
+  reflexao:{icon:'🙏',label:'Reflexão',desc:'Meditação, aplicação pessoal e temas para oração',
+    instrucao:'Modo Reflexão. Traga uma meditação bíblica curta, uma aplicação pessoal prática, um tema para oração e um pensamento espiritual final.'}
+};
+
+const SYSTEM_PROMPT = `Você é o Agente JW, um assistente bíblico que responde EXCLUSIVAMENTE
+com base no conteúdo e no estilo doutrinário das publicações das Testemunhas de Jeová,
+como encontrado em JW.org e na Biblioteca Online (wol.jw.org).
+
+REGRAS OBRIGATÓRIAS:
+1. Nunca use Wikipédia, blogs, fóruns, sites religiosos externos ou opiniões pessoais que não estejam alinhadas ao entendimento das Testemunhas de Jeová.
+2. Toda resposta deve, quando aplicável, incluir: referência bíblica, nome de publicação relacionada (ex: A Sentinela, Despertai!, Estudo Perspicaz, Bíblia - Tradução do Novo Mundo) e sugestão de link de consulta (jw.org ou wol.jw.org).
+3. Se não houver informação suficiente para responder com segurança, responda exatamente: "O Agente JW não encontrou informações suficientes nas fontes disponíveis para responder com segurança."
+4. Respostas devem ser claras, respeitosas, organizadas, didáticas e baseadas em contexto.
+5. Sempre termine com uma seção "📚 Fontes consultadas" listando referências bíblicas, publicações e um link (jw.org ou wol.jw.org).`;
+
+let state = {
+  mode: 'estudo',
+  conversations: JSON.parse(localStorage.getItem('ajw_conversations')||'[]'),
+  favorites: JSON.parse(localStorage.getItem('ajw_favorites')||'[]'),
+  currentMessages: [],
+  currentId: null
+};
+
+const chatArea = document.getElementById('chatArea');
+const welcome = document.getElementById('welcome');
+const input = document.getElementById('input');
+const sendBtn = document.getElementById('sendBtn');
+const modeLabel = document.getElementById('modeLabel');
+
+function saveState(){
+  localStorage.setItem('ajw_conversations', JSON.stringify(state.conversations));
+  localStorage.setItem('ajw_favorites', JSON.stringify(state.favorites));
+}
+
+function getApiKey(){ return localStorage.getItem('ajw_api_key') || ''; }
+function updateKeyBadge(){
+  const badge = document.getElementById('keyBadge');
+  badge.innerHTML = getApiKey() ? '<span class="badge-ok">ativa</span>' : '<span class="badge-off">off</span>';
+}
+
+document.querySelectorAll('.mode-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.mode = btn.dataset.mode;
+    const m = MODES[state.mode];
+    modeLabel.innerHTML = `${m.icon} Modo: ${m.label}<small>${m.desc}</small>`;
+  });
+});
+
+function renderHistory(){
+  const list = document.getElementById('historyList');
+  list.innerHTML = '';
+  if(state.conversations.length===0){
+    list.innerHTML = '<div class="empty-hint">Nenhuma conversa ainda</div>';
+    return;
+  }
+  [...state.conversations].reverse().forEach(conv=>{
+    const div = document.createElement('div');
+    div.className = 'list-item';
+    div.innerHTML = `<span class="txt">${MODES[conv.mode].icon} ${conv.title}</span><button title="Excluir">✕</button>`;
+    div.querySelector('.txt').onclick = ()=> loadConversation(conv.id);
+    div.querySelector('button').onclick = (e)=>{
+      e.stopPropagation();
+      state.conversations = state.conversations.filter(c=>c.id!==conv.id);
+      saveState(); renderHistory();
+    };
+    list.appendChild(div);
+  });
+}
+
+function renderFavorites(){
+  const list = document.getElementById('favList');
+  list.innerHTML = '';
+  if(state.favorites.length===0){
+    list.innerHTML = '<div class="empty-hint">Nenhum favorito ainda</div>';
+    return;
+  }
+  [...state.favorites].reverse().forEach(fav=>{
+    const div = document.createElement('div');
+    div.className = 'list-item';
+    div.innerHTML = `<span class="txt">⭐ ${fav.question}</span><button title="Remover">✕</button>`;
+    div.querySelector('button').onclick = (e)=>{
+      e.stopPropagation();
+      state.favorites = state.favorites.filter(f=>f.id!==fav.id);
+      saveState(); renderFavorites();
+    };
+    list.appendChild(div);
+  });
+}
+
+function loadConversation(id){
+  const conv = state.conversations.find(c=>c.id===id);
+  if(!conv) return;
+  state.currentId = id;
+  state.currentMessages = conv.messages;
+  state.mode = conv.mode;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active', b.dataset.mode===conv.mode));
+  const m = MODES[conv.mode];
+  modeLabel.innerHTML = `${m.icon} Modo: ${m.label}<small>${m.desc}</small>`;
+  redrawChat();
+}
+
+function redrawChat(){
+  chatArea.innerHTML = '';
+  if(state.currentMessages.length===0){
+    chatArea.appendChild(welcome);
+    return;
+  }
+  state.currentMessages.forEach(msg=>addMessageToDOM(msg));
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+function addMessageToDOM(msg){
+  const div = document.createElement('div');
+  div.className = `msg ${msg.role==='user'?'user':'bot'}`;
+  if(msg.role==='bot'){
+    const isFav = state.favorites.some(f=>f.id===msg.id);
+    div.innerHTML = `<button class="fav-btn ${isFav?'active':''}" title="Favoritar">★</button>` +
+      `<div>${escapeHtml(msg.text)}</div><div class="meta">Modo: ${MODES[msg.mode].icon} ${MODES[msg.mode].label}</div>`;
+    div.querySelector('.fav-btn').onclick = ()=> toggleFavorite(msg);
+  } else {
+    div.textContent = msg.text;
+  }
+  chatArea.appendChild(div);
+}
+
+function toggleFavorite(msg){
+  const exists = state.favorites.find(f=>f.id===msg.id);
+  if(exists){
+    state.favorites = state.favorites.filter(f=>f.id!==msg.id);
+  } else {
+    state.favorites.push({id:msg.id, question:msg.question||'Resposta salva', text:msg.text, mode:msg.mode});
+  }
+  saveState();
+  renderFavorites();
+  redrawChat();
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+document.getElementById('newChatBtn').onclick = ()=>{
+  state.currentId = null;
+  state.currentMessages = [];
+  redrawChat();
+};
+
+document.getElementById('clearBtn').onclick = ()=>{
+  if(confirm('Isso apagará todo o histórico e favoritos salvos neste navegador. Continuar?')){
+    state.conversations = [];
+    state.favorites = [];
+    state.currentMessages = [];
+    saveState();
+    renderHistory(); renderFavorites(); redrawChat();
+  }
+};
+
+document.querySelectorAll('.chip').forEach(chip=>{
+  chip.onclick = ()=>{ input.value = chip.dataset.q; input.focus(); };
+});
+
+// Settings modal
+const settingsModal = document.getElementById('settingsModal');
+document.getElementById('settingsBtn').onclick = ()=>{
+  document.getElementById('apiKeyInput').value = getApiKey();
+  settingsModal.classList.add('show');
+};
+document.getElementById('cancelSettings').onclick = ()=> settingsModal.classList.remove('show');
+document.getElementById('saveSettings').onclick = ()=>{
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if(key) localStorage.setItem('ajw_api_key', key);
+  else localStorage.removeItem('ajw_api_key');
+  updateKeyBadge();
+  settingsModal.classList.remove('show');
+};
+
+document.getElementById('mobileToggle').onclick = ()=>{
+  document.getElementById('sidebar').classList.toggle('open');
+};
+
+input.addEventListener('input', ()=>{
+  input.style.height='auto';
+  input.style.height = Math.min(input.scrollHeight,140)+'px';
+});
+input.addEventListener('keydown', (e)=>{
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMessage(); }
+});
+sendBtn.onclick = sendMessage;
+
+async function sendMessage(){
+  const text = input.value.trim();
+  if(!text) return;
+  input.value=''; input.style.height='auto';
+
+  if(chatArea.contains(welcome)) chatArea.removeChild(welcome);
+
+  const userMsg = {id:'m'+Date.now(), role:'user', text, mode: state.mode};
+  state.currentMessages.push(userMsg);
+  addMessageToDOM(userMsg);
+  chatArea.scrollTop = chatArea.scrollHeight;
+
+  const typingEl = document.createElement('div');
+  typingEl.className = 'typing';
+  typingEl.textContent = '📖 Agente JW está consultando as fontes...';
+  chatArea.appendChild(typingEl);
+  chatArea.scrollTop = chatArea.scrollHeight;
+  sendBtn.disabled = true;
+
+  let answer;
+  try{
+    answer = await askAI(text, state.mode);
+  }catch(err){
+    answer = `⚠️ Não foi possível obter resposta da IA.\n\nDetalhe: ${err.message}\n\nVerifique em ⚙️ Configurar chave de IA se sua chave OpenAI está correta e com créditos ativos.`;
+  }
+
+  chatArea.removeChild(typingEl);
+  sendBtn.disabled = false;
+
+  const botMsg = {id:'m'+Date.now()+'b', role:'bot', text:answer, mode: state.mode, question:text};
+  state.currentMessages.push(botMsg);
+  addMessageToDOM(botMsg);
+  chatArea.scrollTop = chatArea.scrollHeight;
+
+  // save/update conversation in history
+  if(!state.currentId){
+    state.currentId = 'c'+Date.now();
+    state.conversations.push({id:state.currentId, title:text.slice(0,40), mode:state.mode, messages:state.currentMessages});
+  } else {
+    const conv = state.conversations.find(c=>c.id===state.currentId);
+    if(conv) conv.messages = state.currentMessages;
+  }
+  saveState();
+  renderHistory();
+}
+
+async function askAI(question, mode){
+  const apiKey = getApiKey();
+  if(!apiKey){
+    return simulatedAnswer(question, mode);
+  }
+  const modeInfo = MODES[mode];
+  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization':'Bearer ' + apiKey,
+      'HTTP-Referer':'https://agente-jw.app',
+      'X-Title':'Agente JW'
+    },
+    body: JSON.stringify({
+      model:'openai/gpt-4o-mini',
+      temperature:0.4,
+      messages:[
+        {role:'system', content: SYSTEM_PROMPT + '\n\n' + modeInfo.instrucao},
+        {role:'user', content: question}
+      ]
+    })
+  });
+  if(!res.ok){
+    const errData = await res.json().catch(()=>({}));
+    throw new Error(errData.error?.message || ('HTTP ' + res.status));
+  }
+  const data = await res.json();
+  return data.choices[0].message.content;
+}
+
+function simulatedAnswer(question, mode){
+  const modeInfo = MODES[mode];
+  return `🔒 Modo demonstração (nenhuma chave de IA configurada).\n\n` +
+`Pergunta recebida: "${question}"\n` +
+`Modo ativo: ${modeInfo.icon} ${modeInfo.label}\n\n` +
+`Para obter respostas reais baseadas em JW.org e wol.jw.org, clique em "⚙️ Configurar chave de IA" na barra lateral e informe sua chave da OpenAI (fica salva apenas no seu navegador).\n\n` +
+`📚 Fontes consultadas:\n- jw.org\n- wol.jw.org`;
+}
+
+// init
+updateKeyBadge();
+renderHistory();
+renderFavorites();
+</script>
+</body>
+</html>
